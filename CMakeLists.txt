@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.21)
+project(feed_exercise CXX)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+find_package(Threads REQUIRED)
+
+add_library(feed STATIC src/sim.cpp src/handler.cpp)
+target_include_directories(feed PUBLIC src third_party)
+target_compile_options(feed PUBLIC -Wall -Wextra)
+target_link_libraries(feed PUBLIC Threads::Threads)
+
+add_executable(sim src/sim_main.cpp)
+add_executable(handler src/handler_main.cpp)
+add_executable(bench src/bench.cpp)
+foreach(t sim handler bench)
+  target_link_libraries(${t} PRIVATE feed)
+endforeach()
+
+enable_testing()
+add_executable(framing_test tests/framing_test.cpp)
+target_link_libraries(framing_test PRIVATE feed)
+add_test(NAME framing_test COMMAND framing_test)
