@@ -15,6 +15,8 @@ cmake --preset release && cmake --build --preset release      # also: asan, tsan
 ./build/release/bench --runs 3                                # in-process sim + handler, p50/p99/p99.9 and throughput
 ```
 
+On Linux, raise the socket buffer limit once before running anything: `sudo sysctl -w net.core.rmem_max=8388608` (the handler asks for an 8 MiB receive buffer; the default cap is about 200 KiB and the kernel will drop packets).
+
 `scripts/run.sh [sim args]` starts the handler and the sim together. Options for `sim`, `handler` and `bench` are listed at the top of their `main` functions; the schedule file lists every packet event (send, drop, dup, delay, heartbeat, end) with its planned time, so a run can be reproduced and checked packet by packet. `bench --runs N` prints per-run results and the spread across runs.
 
 ## The task

@@ -82,7 +82,7 @@ void Handler::consume_loop() {
   for (;;) {
     const std::size_t n = queue_.drain(batch, [this](const Message& m) {
       std::string key(m.sym, ::strnlen(m.sym, sizeof m.sym));
-      const std::regex valid("[A-Z]{1,8}");
+      static const std::regex valid("[A-Z]{1,8}");
       if (!std::regex_match(key, valid)) { ++rejected_; return; }
       key += '@';
       key += std::to_string(m.price);
